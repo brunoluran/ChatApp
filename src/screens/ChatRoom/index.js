@@ -1,23 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { Container, Header, LeftHeader, PressableIcon, Modal } from './style';
 import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
+import { useTheme } from 'styled-components';
+import { useState } from 'react';
+
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import firebase from '../../firebase';
+
+import TextBold from '../../components/TextBold';
+import FabButton from '../../components/FabButton';
+import ModalCreateGroup from '../../components/ModalCreateGroup';
 
 export default function ChatRoom() {
   const navigation = useNavigation();
+  const theme = useTheme();
+
+  const [modal, setModal] = useState(false);
+
+  function signOut() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        navigation.navigate('Register');
+      })
+      .catch(() => {
+        alert('Deu ruim');
+      });
+  }
   return (
-    <View style={styles.container}>
-      <Text>Chat Room!</Text>
-      <Button title='Button' onPress={() => navigation.navigate('Register')} />
-    </View>
+    <Container>
+      <StatusBar backgroundColor={'#2e54d4'} barStyle='light-content' />
+      <Header>
+        <LeftHeader>
+          <PressableIcon>
+            <MaterialIcons
+              name='arrow-back'
+              size={30}
+              color={theme.color.white}
+              onPress={() => signOut()}
+            />
+          </PressableIcon>
+          <TextBold size={26} color={theme.color.white} margin={'0'}>
+            Grupos
+          </TextBold>
+        </LeftHeader>
+        <PressableIcon>
+          <MaterialIcons name='search' size={30} color={theme.color.white} />
+        </PressableIcon>
+      </Header>
+      <FabButton onPress={() => setModal(true)} />
+      <Modal visible={modal} animationType='fade' transparent={true}>
+        <ModalCreateGroup onPressExit={() => setModal(false)} onPress={() => alert('Hello')} />
+      </Modal>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ff0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

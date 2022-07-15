@@ -2,44 +2,60 @@ import { PressableView, KeyboardAvoidingView, Container, ViewLogo, PressableText
 import { useState } from 'react';
 import { Keyboard } from 'react-native';
 import firebase from '../../firebase';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useNavigation } from '@react-navigation/native';
 
 import Input from '../../components/Input';
 import Pressable from '../../components/Pressable';
 import TextBold from '../../components/TextBold';
 import TextRegular from '../../components/TextRegular';
 
-const schema = yup.object({
-  name: yup.string().required('nome obrigatório'),
-  email: yup.string().email('Email errado').required('Email obrigatório'),
-  password: yup
-    .string()
-    .min(6, 'A senha é de no mínimo 06 caracteres')
-    .required('Password obrigatória'),
-});
-
 export default function Register() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [signUp, setSignUp] = useState(false);
 
-  async function handleClick() {
+  async function handleClick(data) {
     if (signUp) {
-      console.log('Cadastrar!');
+      if (name === '' || email === '' || password === '') return;
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((user) => {
+          user.user.updateProfile({
+            displayName: name,
+          });
+        })
+        .then(() => {
+          navigation.goBack();
+        })
+        .catch((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+        });
     } else {
-      console.log('Entrar!');
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          navigation.goBack();
+        })
+        .catch((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+        });
     }
   }
 
@@ -52,55 +68,34 @@ export default function Register() {
             <TextRegular>Ajude, colabore, faça networking!</TextRegular>
           </ViewLogo>
           {signUp && (
-            <Controller
-              control={control}
-              name='name'
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder='Nome'
-                  autoCapitalize='words'
-                  keyboardType='default'
-                  error={errors.name}
-                />
-              )}
+            <Input
+              value={name}
+              onChangeText={(e) => setName(e)}
+              placeholder='Nome'
+              autoCapitalize='words'
+              keyboardType='default'
             />
           )}
-          <Controller
-            control={control}
-            name='email'
-            render={({ field: { onChange, value } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                placeholder='Email'
-                autoCorrect={false}
-                autoCapitalize='none'
-                keyboardType='email-address'
-                error={errors.email}
-              />
-            )}
+
+          <Input
+            value={email}
+            onChangeText={(e) => setEmail(e)}
+            placeholder='Email'
+            autoCorrect={false}
+            autoCapitalize='none'
+            keyboardType='email-address'
           />
-          <Controller
-            control={control}
-            name='password'
-            render={({ field: { onChange, value } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                placeholder='Senha'
-                autoCorrect={false}
-                autoCapitalize='none'
-                secureTextEntry={true}
-                error={errors.password}
-              />
-            )}
+
+          <Input
+            value={password}
+            onChangeText={(e) => setPassword(e)}
+            placeholder='Senha'
+            autoCorrect={false}
+            autoCapitalize='none'
+            secureTextEntry={true}
           />
-          <Pressable
-            text={signUp ? 'Cadastrar' : 'Acessar'}
-            onPress={handleSubmit(() => handleClick())}
-          />
+
+          <Pressable text={signUp ? 'Cadastrar' : 'Acessar'} onPress={() => handleClick()} />
           <PressableText onPress={() => setSignUp(!signUp)}>
             <TextBold size={14}>
               {signUp ? 'Já possuo uma conta' : 'Cadastrar uma nova conta'}

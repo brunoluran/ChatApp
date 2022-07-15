@@ -10,19 +10,17 @@ import { LogBox } from 'react-native';
 LogBox.ignoreAllLogs(true); // Desabilita os warnings na tela
 
 export default function App() {
-  const { fontsLoaded } = useFonts({
+  let [fontsLoaded] = useFonts({
     Lato_400Regular,
     Lato_700Bold,
   });
-
   if (!fontsLoaded) {
-    <AppLoading />;
+    return <AppLoading />;
   }
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <Routes />
-        <StatusBar backgroundColor={'#000'} />
       </NavigationContainer>
     </ThemeProvider>
   );
