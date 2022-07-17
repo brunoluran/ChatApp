@@ -2,11 +2,15 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;
+`;
+
+export const PressableView = styled.Pressable`
+  flex: 1;
   justify-content: flex-end;
   background: rgba(0, 0, 0, 0.4);
 `;
 
-export const ModalItem = styled.View`
+export const ModalContent = styled.View`
   height: 40%;
   width: 100%;
   padding: 20px;
