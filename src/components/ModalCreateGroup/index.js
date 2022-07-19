@@ -2,11 +2,11 @@ import { Container, PressableView, ModalContent, HorizontalBar, PressableIcon } 
 import { useState } from 'react';
 import firebase from '../../firebase';
 
-import TextBold from '../TextBold';
+import Text from '../Text';
 import Input from '../Input';
 import Pressable from '../Pressable';
 
-export default function ModalCreateGroup({ onPress, onPressExit }) {
+export default function ModalCreateGroup({ onPress, onPressExit, setUpdateScreen }) {
   const [newRoom, setNewRoom] = useState('');
 
   const user = firebase.auth().currentUser.toJSON();
@@ -14,6 +14,29 @@ export default function ModalCreateGroup({ onPress, onPressExit }) {
 
   function handleCreate() {
     if (newRoom === '') return;
+
+    firebase
+      .firestore()
+      .collection('MESSAGE_THREADS')
+      .get()
+      .then((snapshot) => {
+        let myThreads = 0;
+
+        snapshot.docs.map((item) => {
+          if (item.data().owner === user.uid) {
+            myThreads += 1;
+          }
+        });
+
+        if (myThreads >= 4) {
+          alert('Você já atingiu o limite de salar por usuario.');
+        } else {
+          createRoom();
+        }
+      });
+  }
+
+  function createRoom() {
     firebase
       .firestore()
       .collection('MESSAGE_THREADS')
@@ -35,6 +58,7 @@ export default function ModalCreateGroup({ onPress, onPressExit }) {
           })
           .then(() => {
             onPressExit();
+            setUpdateScreen();
           });
       })
       .catch((error) => {
@@ -48,9 +72,9 @@ export default function ModalCreateGroup({ onPress, onPressExit }) {
           <PressableIcon onPress={onPressExit}>
             <HorizontalBar />
           </PressableIcon>
-          <TextBold size={22} margin={'10px'}>
+          <Text bold size={22} margin={'10px'}>
             Criar um novo grupo?
-          </TextBold>
+          </Text>
           <Input
             value={newRoom}
             onChangeText={(e) => setNewRoom(e)}

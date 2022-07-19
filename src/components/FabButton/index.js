@@ -2,7 +2,7 @@ import { PressableFabButton } from './style';
 import { useTheme } from 'styled-components';
 import { useNavigation } from '@react-navigation/native';
 
-import TextBold from '../TextBold';
+import Text from '../Text';
 
 export default function FabButton({ onPress, userStatus }) {
   const theme = useTheme();
@@ -13,9 +13,9 @@ export default function FabButton({ onPress, userStatus }) {
   }
   return (
     <PressableFabButton onPress={handleCiick}>
-      <TextBold size={28} color={theme.color.white} margin={'0'}>
+      <Text size={28} color={theme.color.white} margin={'0'}>
         +
-      </TextBold>
+      </Text>
     </PressableFabButton>
   );
 }
