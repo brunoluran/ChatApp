@@ -29,7 +29,7 @@ export default function ModalCreateGroup({ onPress, onPressExit, setUpdateScreen
         });
 
         if (myThreads >= 4) {
-          alert('Você já atingiu o limite de salar por usuario.');
+          alert('Você atingiu o limite de salar por usuario.');
         } else {
           createRoom();
         }
@@ -44,7 +44,7 @@ export default function ModalCreateGroup({ onPress, onPressExit, setUpdateScreen
         name: newRoom,
         owner: user.uid,
         lastMessage: {
-          text: `Grupo ${newRoom} criado. Bem-vindo(a)`,
+          text: `Grupo ${newRoom} criado. `,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         },
       })
@@ -52,7 +52,7 @@ export default function ModalCreateGroup({ onPress, onPressExit, setUpdateScreen
         docRef
           .collection('MESSAGES')
           .add({
-            text: `Grupo ${newRoom} criado. Bem-vindo(a)`,
+            text: `Grupo ${newRoom} criado. `,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             system: true,
           })

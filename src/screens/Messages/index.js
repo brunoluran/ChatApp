@@ -6,36 +6,36 @@ import {
   TextInput,
   InputArea,
   IconArea,
-} from "./style";
-import { StatusBar } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { Platform } from "react-native";
-import { useState, useEffect } from "react";
-import firebase from "../../firebase";
+} from './style';
+import { StatusBar } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
+import { Platform } from 'react-native';
+import { useState, useEffect } from 'react';
+import firebase from '../../firebase';
 
-import ChatMessages from "../../components/ChatMessages";
+import ChatMessages from '../../components/ChatMessages';
 
 export default function Messages({ route }) {
   const { thread } = route.params;
   const [messages, setMessages] = useState([]);
-  const [myMessageInput, setMyMessageInput] = useState("");
+  const [myMessageInput, setMyMessageInput] = useState('');
 
   const user = firebase.auth().currentUser.toJSON();
 
   useEffect(() => {
     const unsubscribeListener = firebase
       .firestore()
-      .collection("MESSAGE_THREADS")
+      .collection('MESSAGE_THREADS')
       .doc(thread._id)
-      .collection("MESSAGES")
-      .orderBy("createdAt", "desc")
+      .collection('MESSAGES')
+      .orderBy('createdAt', 'desc')
       .onSnapshot((querySnapshot) => {
         const messages = querySnapshot.docs.map((doc) => {
           const firebaseData = doc.data();
 
           const data = {
             _id: doc.id,
-            text: "",
+            text: '',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             ...firebaseData,
           };
@@ -58,12 +58,12 @@ export default function Messages({ route }) {
   }, []);
 
   async function handleSend() {
-    if (myMessageInput === "") return;
+    if (myMessageInput === '') return;
     await firebase
       .firestore()
-      .collection("MESSAGE_THREADS")
+      .collection('MESSAGE_THREADS')
       .doc(thread._id)
-      .collection("MESSAGES")
+      .collection('MESSAGES')
       .add({
         text: myMessageInput,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -75,7 +75,7 @@ export default function Messages({ route }) {
 
     await firebase
       .firestore()
-      .collection("MESSAGE_THREADS")
+      .collection('MESSAGE_THREADS')
       .doc(thread._id)
       .set(
         {
@@ -86,33 +86,35 @@ export default function Messages({ route }) {
         },
         { merge: true }
       );
-    setMyMessageInput("");
+    setMyMessageInput('');
   }
 
   return (
     <Container>
-      <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
+      <StatusBar backgroundColor={'#fff'} barStyle='dark-content' />
       <FlatList
         data={messages}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => <ChatMessages data={item} />}
+        inverted={true}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        keyboardVerticalOffset={100}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        keyboardVerticalOffset={60}
       >
         <ViewInputContainer>
           <InputArea>
             <TextInput
               value={myMessageInput}
               onChangeText={(e) => setMyMessageInput(e)}
-              placeholder="Sua mensagem ..."
+              placeholder='Sua mensagem ...'
               multiline={true}
+              //textAlignVertical={'top'}
               autoCorrect={false}
             />
           </InputArea>
           <IconArea onPress={handleSend}>
-            <Feather name="send" color={"#fff"} size={25} />
+            <Feather name='send' color={'#fff'} size={25} />
           </IconArea>
         </ViewInputContainer>
       </KeyboardAvoidingView>

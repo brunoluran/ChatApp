@@ -1,15 +1,15 @@
-import { Container, Header, LeftHeader, PressableIcon, Modal, FlatList } from "./style";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { StatusBar, ActivityIndicator, Alert } from "react-native";
-import { useTheme } from "styled-components";
-import { useState, useEffect } from "react";
-import Octicons from "@expo/vector-icons/Octicons";
-import firebase from "../../firebase";
+import { Container, Header, LeftHeader, PressableIcon, Modal, FlatList } from './style';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { StatusBar, ActivityIndicator, Alert } from 'react-native';
+import { useTheme } from 'styled-components';
+import { useState, useEffect } from 'react';
+import Octicons from '@expo/vector-icons/Octicons';
+import firebase from '../../firebase';
 
-import Text from "../../components/Text";
-import FabButton from "../../components/FabButton";
-import ModalCreateGroup from "../../components/ModalCreateGroup";
-import ChatList from "../../components/ChatList";
+import Text from '../../components/Text';
+import FabButton from '../../components/FabButton';
+import ModalCreateGroup from '../../components/ModalCreateGroup';
+import ChatList from '../../components/ChatList';
 
 export default function ChatRoom() {
   const navigation = useNavigation();
@@ -33,16 +33,16 @@ export default function ChatRoom() {
     function getChats() {
       firebase
         .firestore()
-        .collection("MESSAGE_THREADS")
-        .orderBy("lastMessage.createdAt", "desc")
+        .collection('MESSAGE_THREADS')
+        .orderBy('lastMessage.createdAt', 'desc')
         .limit(10)
         .get()
         .then((snapshot) => {
           const threads = snapshot.docs.map((documentSnapshot) => {
             return {
               _id: documentSnapshot.id,
-              name: "",
-              lastMessage: { text: "" },
+              name: '',
+              lastMessage: { text: '' },
               ...documentSnapshot.data(),
             };
           });
@@ -65,30 +65,30 @@ export default function ChatRoom() {
       .signOut()
       .then(() => {
         setUser(null);
-        navigation.navigate("Register");
+        navigation.navigate('Register');
       })
       .catch(() => {
-        alert("Deu ruim");
+        alert('Deu ruim');
       });
   }
 
   function handleDeleteRoom(ownerId, idRoom) {
     if (ownerId !== user?.uid) return;
-    Alert.alert("Atenção!", "Você tem certeza que deseja deletar essa sala?", [
+    Alert.alert('Atenção!', 'Você tem certeza que deseja deletar essa sala?', [
       {
-        text: "Cancelar",
+        text: 'Cancelar',
         onPress: () => {},
-        style: "cancel",
+        style: 'cancel',
       },
       {
-        text: "Deletar",
+        text: 'Deletar',
         onPress: () => deleteRoom(idRoom),
       },
     ]);
   }
 
   async function deleteRoom(idRoom) {
-    await firebase.firestore().collection("MESSAGE_THREADS").doc(idRoom).delete();
+    await firebase.firestore().collection('MESSAGE_THREADS').doc(idRoom).delete();
     setUpdateScreen(!updateScreen);
   }
 
@@ -96,22 +96,22 @@ export default function ChatRoom() {
     {
       return (
         <ActivityIndicator
-          size="large"
-          color="#2e54d4"
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          size='large'
+          color='#2e54d4'
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         />
       );
     }
   }
   return (
     <Container>
-      <StatusBar backgroundColor={"#2e54d4"} barStyle="light-content" />
+      <StatusBar backgroundColor={'#2e54d4'} barStyle='light-content' />
       <Header>
         <LeftHeader>
           {user && (
             <PressableIcon>
               <Octicons
-                name="arrow-left"
+                name='arrow-left'
                 size={30}
                 color={theme.color.white}
                 onPress={() => signOut()}
@@ -119,16 +119,17 @@ export default function ChatRoom() {
             </PressableIcon>
           )}
 
-          <Text bold size={26} color={theme.color.white} margin={"0"}>
+          <Text bold size={26} color={theme.color.white} margin={'0'}>
             Grupos
           </Text>
         </LeftHeader>
 
-        <PressableIcon>
-          <Octicons name="search" size={30} color={theme.color.white} />
+        <PressableIcon onPress={() => navigation.navigate('Search')}>
+          <Octicons name='search' size={30} color={theme.color.white} />
         </PressableIcon>
       </Header>
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={threads}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
@@ -140,7 +141,7 @@ export default function ChatRoom() {
         )}
       />
       <FabButton onPress={() => setModal(true)} userStatus={user} />
-      <Modal visible={modal} animationType="fade" transparent={true}>
+      <Modal visible={modal} animationType='fade' transparent={true}>
         <ModalCreateGroup
           onPressExit={() => setModal(false)}
           setUpdateScreen={() => setUpdateScreen(!updateScreen)}

@@ -1,8 +1,8 @@
-import { Container, MessageBox } from "./style";
-import { useMemo } from "react";
-import firebase from "../../firebase";
+import { Container, MessageBox } from './style';
+import { useMemo } from 'react';
+import firebase from '../../firebase';
 
-import Text from "../Text";
+import Text from '../Text';
 
 export default function ChatMessages({ data }) {
   const user = firebase.auth().currentUser.toJSON();
@@ -11,17 +11,17 @@ export default function ChatMessages({ data }) {
     return data?.user?._id === user.uid;
   }, [data]);
 
-  //   const isMyMessage = true;
   return (
     <Container>
       <MessageBox isMyMessage={isMyMessage}>
         {!isMyMessage && (
-          <Text bold color={"#f53745"} margin={"0px"}>
-            {data?.user?.displeyName}
+          <Text bold color={'#f53745'} margin={'0px'}>
+            {data?.user?.displayName}
           </Text>
         )}
-
-        <Text margin={"5px"}>{data.text}</Text>
+        <Text margin={isMyMessage ? '0' : '5px'} color={isMyMessage ? '#fff' : '#000'}>
+          {data.text}
+        </Text>
       </MessageBox>
     </Container>
   );

@@ -1,4 +1,4 @@
-import styled from "styled-components/native";
+import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;
@@ -30,7 +30,7 @@ export const InputArea = styled.View`
 
 export const TextInput = styled.TextInput`
   flex: 1;
-  padding: 10px;
+  padding: 5px 15px;
   max-height: 130px;
   min-height: 48px;
 `;

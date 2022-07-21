@@ -33,11 +33,11 @@ export default function Register() {
         })
         .catch((error) => {
           if (error.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
+            //console.log('That email address is already in use!');
           }
 
           if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
+            //console.log('That email address is invalid!');
           }
         });
     } else {
@@ -49,15 +49,19 @@ export default function Register() {
         })
         .catch((error) => {
           if (error.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
+            //console.log('That email address is already in use!');
           }
 
           if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
+            //console.log('That email address is invalid!');
           }
         });
     }
   }
+
+  //mariana@teste.com 101010
+  //matheus@teste.com 101010
+  //bruno@teste.com 101010
 
   return (
     <PressableView onPress={() => Keyboard.dismiss()}>
@@ -66,7 +70,7 @@ export default function Register() {
           <StatusBar backgroundColor={'#fff'} barStyle='dark-content' />
           <ViewLogo>
             <Text bold size={30}>
-              HeyGrupos
+              MyChat
             </Text>
             <Text>Ajude, colabore, faça networking!</Text>
           </ViewLogo>
